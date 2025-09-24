@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Worlde.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<WorldeContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("WorldeContext") ?? throw new InvalidOperationException("Connection string 'WorldeContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -25,5 +30,10 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    SeedData.Initialize(services);
+}
 
 app.Run();
