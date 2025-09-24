@@ -13,6 +13,8 @@ namespace Worlde.Models
 
         public int Length { get; set; }
 
+        public int TimesGuessed { get; set; }
+
         public DateTime Created { get; set; }
     }
 }

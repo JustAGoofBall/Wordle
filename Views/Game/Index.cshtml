@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Play Wordle";
+    var guesses = ViewBag.Guesses as List<string> ?? new List<string>();
+}
+
+<h1>Play Wordle</h1>
+
+<form method="post" id="guessForm">
+    <table class="table table-bordered" style="width: 250px; text-align: center;">
+        @for (int row = 0; row < 6; row++)
+        {
+            <tr>
+                @for (int col = 0; col < 5; col++)
+                {
+                    <td>
+                        @{
+                            if (row < guesses.Count && col < guesses[row].Length)
+                            {
+                                @guesses[row][col]
+                            }
+                            else
+                            {
+                                @:&nbsp;
+                            }
+                        }
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+    <input type="text" id="guessInput" name="guess" maxlength="5" pattern="[a-z]{5}" class="form-control" style="width: 120px; display: inline-block;" autocomplete="off" required />
+    <button type="submit" class="btn btn-primary">Guess</button>
+</form>
+
+<script>
+    // Alleen kleine letters toestaan
+    document.getElementById('guessInput').addEventListener('input', function (e) {
+        this.value = this.value.replace(/[^a-z]/g, '').substring(0, 5);
+    });
+</script>

@@ -28,6 +28,7 @@ namespace Worlde.Data
                 {
                     Letters = w,
                     Length = w.Length,
+                    TimesGuessed = 0,
                     Created = DateTime.UtcNow
                 });
             }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Worlde.Data;
 
@@ -11,9 +12,11 @@ using Worlde.Data;
 namespace Worlde.Migrations
 {
     [DbContext(typeof(WorldeContext))]
-    partial class WorldeContextModelSnapshot : ModelSnapshot
+    [Migration("20250924115850_AddTimesGuessedToWord")]
+    partial class AddTimesGuessedToWord
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
