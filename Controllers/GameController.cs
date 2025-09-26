@@ -39,9 +39,14 @@ namespace Worlde.Controllers
                 ? new GameData()
                 : JsonSerializer.Deserialize<GameData>(gameDataJson) ?? new GameData();
 
+            bool maxGuessesReached = gameData.Guesses.Count >= 6;
+            bool wordGuessed = gameData.Guesses.Any(g => g.Guess == word);
+
             ViewBag.Guesses = gameData.Guesses;
             ViewBag.CurrentWord = word;
             ViewBag.ColoredGuesses = gameData.Guesses;
+            ViewBag.RevealWord = maxGuessesReached && !wordGuessed;
+            ViewBag.WordToReveal = word;
             return View();
         }
 
@@ -142,8 +147,14 @@ namespace Worlde.Controllers
                 session.SetString("GameData", JsonSerializer.Serialize(gameData));
             }
 
+            bool maxGuessesReached = gameData.Guesses.Count >= 6;
+            bool wordGuessed = gameData.Guesses.Any(g => g.Guess == word);
+
             ViewBag.ColoredGuesses = gameData.Guesses;
             ViewBag.CurrentWord = word;
+            ViewBag.RevealWord = maxGuessesReached && !wordGuessed;
+            ViewBag.WordToReveal = word;
+            ViewBag.Congrats = wordGuessed;
             return View();
         }
 

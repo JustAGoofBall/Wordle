@@ -3,6 +3,9 @@
     var guesses = ViewBag.Guesses as List<string> ?? new List<string>();
     var coloredGuesses = ViewBag.ColoredGuesses as List<Worlde.Models.ColoredGuess> ?? new List<Worlde.Models.ColoredGuess>();
     bool maxGuessesReached = coloredGuesses.Count >= 6;
+    bool revealWord = ViewBag.RevealWord as bool? ?? false;
+    string wordToReveal = ViewBag.WordToReveal as string ?? "";
+    bool congrats = ViewBag.Congrats as bool? ?? false;
 }
 
 <h1>Play Wordle</h1>
@@ -10,6 +13,20 @@
 @if (ViewBag.Error != null)
 {
     <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+@if (congrats)
+{
+    <div class="alert alert-success">
+        Congratulations, you guessed the word!
+    </div>
+}
+
+@if (revealWord)
+{
+    <div class="alert alert-info">
+        The word was: <strong>@wordToReveal.ToUpper()</strong>
+    </div>
 }
 
 <form method="post" id="guessForm">
@@ -27,15 +44,13 @@
                             : "white"
                             : "white"
                     )">
-                        @{
-                            if (row < coloredGuesses.Count && col < coloredGuesses[row].Letters.Count)
-                            {
-                                @coloredGuesses[row].Letters[col].Letter
-                            }
-                            else
-                            {
-                                @:&nbsp;
-                            }
+                        @if (row < coloredGuesses.Count && col < coloredGuesses[row].Letters.Count)
+                        {
+                            @coloredGuesses[row].Letters[col].Letter
+                        }
+                        else
+                        {
+                            @:&nbsp;
                         }
                     </td>
                 }
