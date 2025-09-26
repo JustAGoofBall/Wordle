@@ -2,9 +2,15 @@
     ViewData["Title"] = "Play Wordle";
     var guesses = ViewBag.Guesses as List<string> ?? new List<string>();
     var coloredGuesses = ViewBag.ColoredGuesses as List<Worlde.Models.ColoredGuess> ?? new List<Worlde.Models.ColoredGuess>();
+    bool maxGuessesReached = coloredGuesses.Count >= 6;
 }
 
 <h1>Play Wordle</h1>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
 
 <form method="post" id="guessForm">
     <table class="table table-bordered" style="width: 250px; text-align: center;">
@@ -13,21 +19,14 @@
             <tr>
                 @for (int col = 0; col < 5; col++)
                 {
-                    <td style="background-color: @{
-                        if (row < coloredGuesses.Count && col < coloredGuesses[row].Letters.Count)
-                        {
-                            var color = coloredGuesses[row].Letters[col].Color;
-                            @(
-                                color == "green" ? "limegreen" :
-                                color == "yellow" ? "gold" :
-                                "lightgray"
-                            )
-                        }
-                        else
-                        {
-                            @:"white"
-                        }
-                    }">
+                    <td style="background-color:@(
+                        row < coloredGuesses.Count && col < coloredGuesses[row].Letters.Count
+                            ? coloredGuesses[row].Letters[col].Color == "green" ? "limegreen"
+                            : coloredGuesses[row].Letters[col].Color == "yellow" ? "gold"
+                            : coloredGuesses[row].Letters[col].Color == "gray" ? "lightgray"
+                            : "white"
+                            : "white"
+                    )">
                         @{
                             if (row < coloredGuesses.Count && col < coloredGuesses[row].Letters.Count)
                             {
@@ -43,8 +42,8 @@
             </tr>
         }
     </table>
-    <input type="text" id="guessInput" name="guess" maxlength="5" pattern="[a-z]{5}" class="form-control" style="width: 120px; display: inline-block;" autocomplete="off" required />
-    <button type="submit" class="btn btn-primary">Guess</button>
+    <input type="text" id="guessInput" name="guess" maxlength="5" pattern="[a-z]{5}" class="form-control" style="width: 120px; display: inline-block;" autocomplete="off" required @(maxGuessesReached ? "disabled" : "") />
+    <button type="submit" class="btn btn-primary" @(maxGuessesReached ? "disabled" : "")>Guess</button>
 </form>
 
 <form method="post" asp-action="Reset" style="display:inline;">

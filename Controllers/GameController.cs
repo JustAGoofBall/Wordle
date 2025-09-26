@@ -58,9 +58,30 @@ namespace Worlde.Controllers
 
             string? word = session.GetString("CurrentWord");
 
+            // Maximaal 6 pogingen
+            if (gameData.Guesses.Count >= 6)
+            {
+                ViewBag.ColoredGuesses = gameData.Guesses;
+                ViewBag.CurrentWord = word;
+                ViewBag.Error = "Je hebt het maximale aantal pogingen bereikt.";
+                return View();
+            }
+
+            // Alleen verwerken als het woord 5 letters is en bestaat in de database
             if (!string.IsNullOrWhiteSpace(guess) && guess.Length == 5 && !string.IsNullOrEmpty(word))
             {
                 guess = guess.ToLower();
+
+                // Controleer of het woord bestaat in de database
+                bool wordExists = _context.Word.Any(w => w.Letters == guess);
+                if (!wordExists)
+                {
+                    ViewBag.ColoredGuesses = gameData.Guesses;
+                    ViewBag.CurrentWord = word;
+                    ViewBag.Error = "Dit woord bestaat niet in de woordenlijst.";
+                    return View();
+                }
+
                 word = word.ToLower();
 
                 var coloredGuess = new ColoredGuess
@@ -72,42 +93,48 @@ namespace Worlde.Controllers
                 var wordChars = word.ToCharArray();
                 var guessChars = guess.ToCharArray();
                 var letterColors = new string[5];
+                var wordCharUsed = new bool[5];
 
-                // Eerst groen toewijzen
+                // 1. Groen toewijzen (juiste letter op juiste plek)
                 for (int i = 0; i < 5; i++)
                 {
                     if (guessChars[i] == wordChars[i])
                     {
                         letterColors[i] = "green";
-                        wordChars[i] = '*'; // Markeer als gebruikt
+                        wordCharUsed[i] = true;
                     }
                 }
 
-                // Daarna geel/grijs toewijzen
+                // 2. Geel/grijs toewijzen
                 for (int i = 0; i < 5; i++)
                 {
                     if (letterColors[i] == "green")
                     {
                         coloredGuess.Letters.Add(new LetterResult { Letter = guessChars[i], Color = "green" });
                     }
-                    else if (wordChars.Contains(guessChars[i]))
+                    else
                     {
-                        letterColors[i] = "yellow";
-                        // Markeer eerste gevonden letter als gebruikt
+                        // Kijk of deze letter nog ergens anders in het woord voorkomt (en nog niet gebruikt is)
+                        bool found = false;
                         for (int j = 0; j < 5; j++)
                         {
-                            if (wordChars[j] == guessChars[i])
+                            if (!wordCharUsed[j] && guessChars[i] == wordChars[j])
                             {
-                                wordChars[j] = '*';
+                                found = true;
+                                wordCharUsed[j] = true;
                                 break;
                             }
                         }
-                        coloredGuess.Letters.Add(new LetterResult { Letter = guessChars[i], Color = "yellow" });
-                    }
-                    else
-                    {
-                        letterColors[i] = "gray";
-                        coloredGuess.Letters.Add(new LetterResult { Letter = guessChars[i], Color = "gray" });
+                        if (found)
+                        {
+                            letterColors[i] = "yellow";
+                            coloredGuess.Letters.Add(new LetterResult { Letter = guessChars[i], Color = "yellow" });
+                        }
+                        else
+                        {
+                            letterColors[i] = "gray";
+                            coloredGuess.Letters.Add(new LetterResult { Letter = guessChars[i], Color = "gray" });
+                        }
                     }
                 }
 
