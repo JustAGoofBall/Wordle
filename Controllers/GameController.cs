@@ -41,6 +41,7 @@ namespace Worlde.Controllers
 
             ViewBag.Guesses = gameData.Guesses;
             ViewBag.CurrentWord = word;
+            ViewBag.ColoredGuesses = gameData.Guesses;
             return View();
         }
 
@@ -55,15 +56,75 @@ namespace Worlde.Controllers
                 ? new GameData()
                 : JsonSerializer.Deserialize<GameData>(gameDataJson) ?? new GameData();
 
-            if (!string.IsNullOrWhiteSpace(guess) && guess.Length == 5)
+            string? word = session.GetString("CurrentWord");
+
+            if (!string.IsNullOrWhiteSpace(guess) && guess.Length == 5 && !string.IsNullOrEmpty(word))
             {
-                gameData.Guesses.Add(guess.ToLower());
+                guess = guess.ToLower();
+                word = word.ToLower();
+
+                var coloredGuess = new ColoredGuess
+                {
+                    Guess = guess,
+                    Letters = new List<LetterResult>()
+                };
+
+                var wordChars = word.ToCharArray();
+                var guessChars = guess.ToCharArray();
+                var letterColors = new string[5];
+
+                // Eerst groen toewijzen
+                for (int i = 0; i < 5; i++)
+                {
+                    if (guessChars[i] == wordChars[i])
+                    {
+                        letterColors[i] = "green";
+                        wordChars[i] = '*'; // Markeer als gebruikt
+                    }
+                }
+
+                // Daarna geel/grijs toewijzen
+                for (int i = 0; i < 5; i++)
+                {
+                    if (letterColors[i] == "green")
+                    {
+                        coloredGuess.Letters.Add(new LetterResult { Letter = guessChars[i], Color = "green" });
+                    }
+                    else if (wordChars.Contains(guessChars[i]))
+                    {
+                        letterColors[i] = "yellow";
+                        // Markeer eerste gevonden letter als gebruikt
+                        for (int j = 0; j < 5; j++)
+                        {
+                            if (wordChars[j] == guessChars[i])
+                            {
+                                wordChars[j] = '*';
+                                break;
+                            }
+                        }
+                        coloredGuess.Letters.Add(new LetterResult { Letter = guessChars[i], Color = "yellow" });
+                    }
+                    else
+                    {
+                        letterColors[i] = "gray";
+                        coloredGuess.Letters.Add(new LetterResult { Letter = guessChars[i], Color = "gray" });
+                    }
+                }
+
+                gameData.Guesses.Add(coloredGuess);
                 session.SetString("GameData", JsonSerializer.Serialize(gameData));
             }
 
-            ViewBag.Guesses = gameData.Guesses;
-            ViewBag.CurrentWord = session.GetString("CurrentWord");
+            ViewBag.ColoredGuesses = gameData.Guesses;
+            ViewBag.CurrentWord = word;
             return View();
+        }
+
+        public IActionResult Reset()
+        {
+            HttpContext.Session.Remove("GameData");
+            HttpContext.Session.Remove("CurrentWord");
+            return RedirectToAction("Index");
         }
     }
 }

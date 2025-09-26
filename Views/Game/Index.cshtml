@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Play Wordle";
     var guesses = ViewBag.Guesses as List<string> ?? new List<string>();
+    var coloredGuesses = ViewBag.ColoredGuesses as List<Worlde.Models.ColoredGuess> ?? new List<Worlde.Models.ColoredGuess>();
 }
 
 <h1>Play Wordle</h1>
@@ -12,11 +13,25 @@
             <tr>
                 @for (int col = 0; col < 5; col++)
                 {
-                    <td>
+                    <td style="background-color: @{
+                        if (row < coloredGuesses.Count && col < coloredGuesses[row].Letters.Count)
+                        {
+                            var color = coloredGuesses[row].Letters[col].Color;
+                            @(
+                                color == "green" ? "limegreen" :
+                                color == "yellow" ? "gold" :
+                                "lightgray"
+                            )
+                        }
+                        else
+                        {
+                            @:"white"
+                        }
+                    }">
                         @{
-                            if (row < guesses.Count && col < guesses[row].Length)
+                            if (row < coloredGuesses.Count && col < coloredGuesses[row].Letters.Count)
                             {
-                                @guesses[row][col]
+                                @coloredGuesses[row].Letters[col].Letter
                             }
                             else
                             {
@@ -30,6 +45,10 @@
     </table>
     <input type="text" id="guessInput" name="guess" maxlength="5" pattern="[a-z]{5}" class="form-control" style="width: 120px; display: inline-block;" autocomplete="off" required />
     <button type="submit" class="btn btn-primary">Guess</button>
+</form>
+
+<form method="post" asp-action="Reset" style="display:inline;">
+    <button type="submit" class="btn btn-secondary">Opnieuw spelen</button>
 </form>
 
 <script>

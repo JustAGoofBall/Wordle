@@ -4,6 +4,8 @@ namespace Worlde.Models
 {
     public class GameData
     {
-        public List<string> Guesses { get; set; } = new();
+        public List<ColoredGuess> Guesses { get; set; } = new();
+        public bool IsGameOver { get; set; } = false;
+        public bool IsWin { get; set; } = false;
     }
 }

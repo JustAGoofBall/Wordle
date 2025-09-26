@@ -16,11 +16,16 @@ namespace Worlde.Data
             if (context.Word.Any())
                 return;
 
-            var words = new[]
-            {
-                "apple", "grape", "pearl", "table", "chair",
-                "plant", "bread", "flame", "crane", "sword"
-            };
+            // Pad naar het tekstbestand met woorden
+            var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "words.txt");
+
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException("words.txt niet gevonden.", filePath);
+
+            var words = File.ReadAllLines(filePath)
+                            .Select(w => w.Trim().ToLower())
+                            .Where(w => w.Length == 5 && w.All(char.IsLetter))
+                            .Distinct();
 
             foreach (var w in words)
             {
