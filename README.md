@@ -5,22 +5,26 @@
 ## 📚 About
 
 This is a **school project** that recreates the popular word game **Wordle**.  
-The goal was to replicate the original game mechanics while learning about programming concepts such as input handling, UI design, and basic game logic.
+The goal was to replicate the gameplay mechanics and visual style of the original Wordle while learning about **MVC architecture** and responsive web design using **Bootstrap**.
 
 ## 🧩 Features
 
 - Guess a 5-letter word within 6 tries  
-- Colored feedback for each letter:
-  - 🟩 **Green**: Correct letter in the correct spot  
-  - 🟨 **Yellow**: Correct letter in the wrong spot  
-  - ⬜ **Gray**: Letter not in the word  
-- Keeps track of previous guesses  
-- Simple, clean user interface  
+- Color feedback for each letter:
+  - 🟩 **Green** — Correct letter, correct position  
+  - 🟨 **Yellow** — Correct letter, wrong position  
+  - ⬜ **Gray** — Letter not in the word  
+- Displays previous guesses  
+- Clean, user-friendly interface  
 
 ## 🛠️ Built With
 
-- **Language/Framework**: (Add what you used here, e.g. Python, JavaScript, JavaFX, etc.)
-- **Tools**: (Optional — mention your IDE, e.g. Visual Studio Code, IntelliJ, etc.)
+- **C#** — Core logic and backend  
+- **ASP.NET MVC** — Project structure and routing  
+- **HTML** — Page layout  
+- **CSS** — Custom styling  
+- **Bootstrap** — Responsive design and components  
+- **JavaScript** — Dynamic interaction  
 
 ## 🚀 How to Run
 
