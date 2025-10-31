@@ -30,4 +30,4 @@ The goal was to replicate the gameplay mechanics and visual style of the origina
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/<your-username>/<your-repo-name>.git
+   git clone https://github.com/JustAGoofBall/Wordle.git
